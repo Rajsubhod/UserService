@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+spring:
+  application:
+    name: UserService
+
+  data:
+    mongodb:
+      uri: mongodb+srv://rajsubhod:raj%40password@userdetails.r4rme.mongodb.net/userservice?retryWrites=true&w=majority&appName=userdetails
+
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.rajsubhod.userservice.deserializer.UserInfoDeserializer
+      group-id: ${KAFKA_GROUP_ID:1}
+      auto-offset-reset: earliest
+    topic:
+        name: ${KAFKA_TOPIC_NAME:auth}
