@@ -1,5 +1,6 @@
 package com.rajsubhod.userservice.service;
 
+import com.rajsubhod.userservice.dto.UserInfoDto;
 import com.rajsubhod.userservice.entity.UserInfo;
 import com.rajsubhod.userservice.repository.UserInfoRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,26 +18,40 @@ public class UserService {
     private final UserInfoRepository userInfoRepository;
 
 
-    public void saveOrUpdateUserInfo(UserInfo userInfo) {
-        Optional<UserInfo> userDetails = userInfoRepository.findByUserId(userInfo.getUserId());
+    public void saveUserInfo(UserInfo userInfo) {
+        userInfoRepository.save(userInfo);
+    }
+
+    public void updateUserInfo(String userId, UserInfoDto userInfoDto) {
+        Optional<UserInfo> userDetails = userInfoRepository.findByUserId(userId);
         if(userDetails.isPresent()){
             UserInfo updatedUserInfo = userDetails.get();
-            updatedUserInfo.setFirstName(userInfo.getFirstName());
-            updatedUserInfo.setLastName(userInfo.getLastName());
-            updatedUserInfo.setPhoneNumber(userInfo.getPhoneNumber());
-            updatedUserInfo.setPassword(userInfo.getPassword());
+            updatedUserInfo.setFirstName(userInfoDto.getFirstName());
+            updatedUserInfo.setLastName(userInfoDto.getLastName());
+            updatedUserInfo.setPhoneNumber(userInfoDto.getPhoneNumber());
             userInfoRepository.save(updatedUserInfo);
         } else {
-            userInfoRepository.save(userInfo);
+            throw new RuntimeException("User not found");
         }
     }
 
-    public UserInfo getUserInfo(String userId) {
-        return userInfoRepository.findByUserId(userId).orElseThrow(()->
-                new RuntimeException("User not found with userId: "+userId));
+    private UserInfoDto convertToDto(UserInfo userInfo) {
+        return new UserInfoDto(
+                userInfo.getUsername(),
+                userInfo.getFirstName(),
+                userInfo.getLastName(),
+                userInfo.getEmail(),
+                userInfo.getPhoneNumber()
+        );
+    }
+
+    public UserInfoDto getUserInfo(String userId) {
+
+        return userInfoRepository.findByUserId(userId).map(this::convertToDto).orElseThrow(()-> new RuntimeException("User not found"));
     }
 
     public List<UserInfo> getUserInfo() {
         return userInfoRepository.findAll();
     }
+
 }

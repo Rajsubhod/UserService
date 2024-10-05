@@ -17,7 +17,7 @@ public class UserInfoConsumer{
     @KafkaListener(topics = "${spring.kafka.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
     public void receiveEventFromQueue(UserInfo userInfo) {
         try{
-            userService.saveOrUpdateUserInfo(userInfo);
+            userService.saveUserInfo(userInfo);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
