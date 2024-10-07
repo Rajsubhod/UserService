@@ -21,7 +21,7 @@ public class UserInfoConsumer{
     @KafkaListener(topics = "${spring.kafka.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
     public void receiveEventFromQueue(UserInfo userInfo) {
         try{
-            logger.info("Received UserInfo: {}", userInfo);
+            logger.info("Consuming message to topic: ${spring.kafka.topic.name}");
             userService.saveUserInfo(userInfo);
         } catch (RuntimeException e) {
             logger.error("Error while processing UserInfo: {}", userInfo);
