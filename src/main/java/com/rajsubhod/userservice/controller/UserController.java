@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user/api")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -96,9 +96,9 @@ public class UserController {
      * @return UserInfoDto
      */
 
-    @GetMapping({"/v1/","/v1/{userId}"})
+    @GetMapping({"/v1/id","/v1/{userId}"})
     public ResponseEntity<?> getUserById(@PathVariable(required = false) String userId, HttpServletRequest request){
-        userId = request.getHeader("userId");
+        userId = request.getHeader("X-User-Id");
         if(userId == null || userId.isEmpty()){
             logger.warn("User ID is required but not provided");
             return new ResponseEntity<>("User Id is required", HttpStatus.BAD_REQUEST);
@@ -111,7 +111,7 @@ public class UserController {
      * <p>
      * This method is used to update the user
      * </p>
-     * Accessible by only admin
+     * Accessible by admin for any users and user for self
      * </p>
      * @param userId
      * @param userInfoDto
@@ -119,8 +119,8 @@ public class UserController {
      * @return UserInfoDto
      */
 
-    @PutMapping({"/vi/","/v1/{userId}"})
-    public ResponseEntity<?> updateUser(@PathVariable(required = false) String userId, @RequestBody UserInfoDto userInfoDto, @RequestHeader("userId") String requestUserId){
+    @PutMapping({"/v1/id","/v1/{userId}"})
+    public ResponseEntity<?> updateUser(@PathVariable(required = false) String userId, @RequestBody UserInfoDto userInfoDto, @RequestHeader("X-User-Id") String requestUserId){
         if(userId == null || userId.isEmpty()){
             userId = requestUserId;
         }
